@@ -40,7 +40,7 @@ pipeline {
         stage('Manage EC2 Instances') {
             steps {
                 script {
-                    manageEC2ByTag2(env.ENVIRONMENT, env.ACTION)
+                    shutdownEC2ByTag2(env.ENVIRONMENT, env.ACTION)
                 }
             }
         }
