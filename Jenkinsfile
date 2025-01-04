@@ -8,6 +8,14 @@ pipeline {
     }
     
     stages {
+        stage('Script Owner'){
+            steps {
+                script {
+                     // just a quick interview
+                     echo "the owner pf this script is Yani Abdelmelk"
+                       }
+                  }
+           }
         stage('Read Parameters') {
             steps {
                 script {
