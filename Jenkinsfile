@@ -13,14 +13,20 @@ pipeline {
                 script {
                     def json = readJSON file: 'environment.json'
                     env.ENVIRONMENT = json.environment
+                    env.ACTION = json.action.toLowerCase()
+                    
+                    // Validate action
+                    if (!(env.ACTION in ['start', 'stop'])) {
+                        error "Invalid action: ${env.ACTION}. Must be either 'start' or 'stop'"
+                    }
                 }
             }
         }
         
-        stage('Shutdown EC2 Instances') {
+        stage('Manage EC2 Instances') {
             steps {
                 script {
-                    shutdownEC2ByTag(env.ENVIRONMENT)
+                    manageEC2ByTag2(env.ENVIRONMENT, env.ACTION)
                 }
             }
         }
@@ -28,10 +34,10 @@ pipeline {
     
     post {
         success {
-            echo "Successfully shutdown EC2 instances for environment: ${env.ENVIRONMENT}"
+            echo "Successfully ${env.ACTION}ed EC2 instances for environment: ${env.ENVIRONMENT}"
         }
         failure {
-            echo "Failed to shutdown EC2 instances for environment: ${env.ENVIRONMENT}"
+            echo "Failed to ${env.ACTION} EC2 instances for environment: ${env.ENVIRONMENT}"
         }
     }
 }
