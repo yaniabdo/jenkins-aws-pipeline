@@ -11,13 +11,27 @@ pipeline {
         stage('Read Parameters') {
             steps {
                 script {
-                    def json = readJSON file: 'environment.json'
-                    env.ENVIRONMENT = json.environment
-                    env.ACTION = json.action.toLowerCase()
+                    // Add debug information
+                    sh 'pwd'
+                    sh 'ls -la'
                     
-                    // Validate action
-                    if (!(env.ACTION in ['start', 'stop'])) {
-                        error "Invalid action: ${env.ACTION}. Must be either 'start' or 'stop'"
+                    try {
+                        def json = readJSON file: 'environment.json'
+                        echo "Read JSON: ${json}"
+                        
+                        env.ENVIRONMENT = json.environment
+                        env.ACTION = json.action.toLowerCase()
+                        
+                        echo "Environment: ${env.ENVIRONMENT}"
+                        echo "Action: ${env.ACTION}"
+                        
+                        // Validate action
+                        if (!(env.ACTION in ['start', 'stop'])) {
+                            error "Invalid action: ${env.ACTION}. Must be either 'start' or 'stop'"
+                        }
+                    } catch (Exception e) {
+                        echo "Error reading JSON: ${e.getMessage()}"
+                        throw e
                     }
                 }
             }
