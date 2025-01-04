@@ -1,4 +1,4 @@
 {
     "environment": "development",
-    "action": "start"
+    "action": "stop"
 }
